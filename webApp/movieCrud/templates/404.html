@@ -1,0 +1,8 @@
+{% extends 'movieCrud/layout.html' %}
+
+{% block title %}Not Found{% endblock title %}
+
+{% block content %}
+  <h1 class="m-3 mb-4 text-center">Whoops, it looks like the page you're looking for doesn't exist!</h1>
+  <h2 class="text-center"><a class="btn btn-lg btn-primary" href="{% url 'home' %}">Take me home</a></h2>
+{% endblock content %}

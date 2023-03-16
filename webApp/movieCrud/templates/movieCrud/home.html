@@ -1,0 +1,89 @@
+{% extends 'movieCrud/layout.html' %}
+
+{% block title %}Leonard Maltin's Movie Guide{% endblock title %}
+
+{% block content %}
+  {% if searchQuery %}
+    {% if searchType == 'actor' or searchType == 'director' %}
+      {% if paginator.count %}
+  <h3>Viewing {{ searchType }}{{ paginator.count|pluralize }} {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }} for search "{{ searchQuery }}":</h3>
+      {% else %}
+  <h3>No {{ searchType }}s found for search "{{ searchQuery }}":</h3>
+      {% endif %}
+    {% elif searchType == 'country' %}
+      {% if paginator.count %}
+  <h3>Viewing countr{{ paginator.count|pluralize:"y,ies" }} {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }} for search "{{ searchQuery }}":</h3>
+      {% else %}
+  <h3>No countries found for search "{{ searchQuery }}":</h3>
+      {% endif %}
+    {% elif searchType == 'year' %}
+      {% if paginator.count %}
+  <h3>Viewing movie{{ paginator.count|pluralize }} {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }} from {{ searchQuery }}:</h3>
+      {% else %}
+  <h3>No movies found from {{ searchQuery }}:</h3>
+      {% endif %}
+    {% elif searchType == 'rating' %}
+      {% if paginator.count %}
+  <h3>Viewing movie{{ paginator.count|pluralize }} {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }} with {{ searchQuery }} star{{ searchQuery|pluralize }}:</h3>
+      {% else %}
+  <h3>No movies found with {{ searchQuery }} star{{ searchQuery|pluralize }}:</h3>
+      {% endif %}
+    {% elif searchType == 'review' %}
+      {% if paginator.count %}
+  <h3>Viewing movie{{ paginator.count|pluralize }} {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }} for search "{{ searchQuery }}" by review:</h3>
+      {% else %}
+  <h3>No movies found for search "{{ searchQuery }}" by review:</h3>
+      {% endif %}
+    {% else %}
+      {% if paginator.count %}
+  <h3>Viewing movie{{ paginator.count|pluralize }} {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }} for search "{{ searchQuery }}" by title:</h3>
+      {% else %}
+  <h3>No movies found for search "{{ searchQuery }}" by title:</h3>
+      {% endif %}
+    {% endif %}
+  {% else %}
+    {% if isMovieObjs %}
+  <h3>Viewing movie{{ paginator.count|pluralize }} {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}:</h3>
+    {% elif searchType == 'country' %}
+  <h3>Viewing countr{{ paginator.count|pluralize:"y,ies" }} {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}:</h3>
+    {% else %}
+  <h3>Viewing {{ searchType }}{{ paginator.count|pluralize }} {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}:</h3>
+    {% endif %}
+  {% endif %}
+
+  <div class="my-4 list-group">
+    {% for object in object_list %}
+      {% if searchType == 'actor' %}
+    <a class="list-group-item list-group-item-action" href="{% url 'actorDetail' object.id %}">{{ object.name }}</a>
+      {% elif searchType == 'director' %}
+    <a class="list-group-item list-group-item-action" href="{% url 'directorDetail' object.id %}">{{ object.name }}</a>
+      {% elif searchType == 'country' %}
+    <a class="list-group-item list-group-item-action" href="{% url 'countryDetail' object.id %}">{{ object.name }}</a>
+      {% else %}
+    <a class="list-group-item list-group-item-action" href="{% url 'movieDetail' object.id %}">{{ object.title }} ({{ object.year }}) {{ object.getStars }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <nav>
+    <ul class="pagination justify-content-end">
+  {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?type={{ searchType }}&q={{ searchQuery }}&page=1">First</a></li>
+      <li class="page-item"><a class="page-link" href="?type={{ searchType }}&q={{ searchQuery }}&page={{ page_obj.previous_page_number }}">Previous</a></li>
+  {% else %}
+      <li class="page-item disabled"><a class="page-link" tabindex="-1" href="?type={{ searchType }}&q={{ searchQuery }}&page=1">First</a></li>
+      <li class="page-item disabled"><a class="page-link" tabindex="-1" href="?type={{ searchType }}&q={{ searchQuery }}&page=1">Previous</a></li>
+  {% endif %}
+
+      <li class="page-item active"><a class="page-link" href="">{{ page_obj.number }}</a></li>
+
+  {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?type={{ searchType }}&q={{ searchQuery }}&page={{ page_obj.next_page_number }}">Next</a></li>
+      <li class="page-item"><a class="page-link" href="?type={{ searchType }}&q={{ searchQuery }}&page={{ paginator.num_pages }}">Last</a></li>
+  {% else %}
+      <li class="page-item disabled"><a class="page-link" tabindex="-1" href="?type={{ searchType }}&q={{ searchQuery }}&page={{ page_obj.num_pages }}">Next</a></li>
+      <li class="page-item disabled"><a class="page-link" tabindex="-1" href="?type={{ searchType }}&q={{ searchQuery }}&page={{ paginator.num_pages }}">Last</a></li>
+  {% endif %}
+    </ul>
+  </nav>
+{% endblock content %}

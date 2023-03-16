@@ -1,0 +1,68 @@
+{% extends 'movieCrud/layout.html' %}
+
+{% block title %}{{ movie.title }}{% endblock title %}
+
+{% block content %}
+  <article class="p-3 border">
+  {% if movie.see %}
+    <h1>{{ movie.title }}</h1>
+    <hr class="mt-0">
+    {% if referenceId %}
+    <p>SEE: <a href="{% url 'movieDetail' pk=referenceId %}">{{ movie.review }}</a></p>
+    {% else %}
+    <p>SEE: {{ movie.review }}</p>
+    {% endif %}
+  {% else %}
+    {% if movie.year %}
+      {% if movie.runtime %}
+    <h1>{{ movie.title }} <small class="text-secondary">({{ movie.year }}, {{movie.runtime}})</small></h1>
+      {% else %}
+    <h1>{{ movie.title }} <small class="text-secondary">({{ movie.year }})</small></h1>
+      {% endif %}
+    {% else %}
+      {% if movie.runtime %}
+    <h1>{{ movie.title }} <small class="text-secondary">({{ movie.runtime }})</small></h1>
+      {% else %}
+    <h1>{{ movie.title }}</h1>
+      {% endif %}
+    {% endif %}
+
+    <hr class="mt-0">
+
+    <h2 class="p-2 text-center">{{ movie.getStars }}</h2>
+
+    {% with dirs=movie.directors.all %}
+      {% if dirs|length %}
+    <h3>Director{{ dirs|length|pluralize }}:</h3>
+    <p>{% for director in dirs %}<a href="{% url 'directorDetail' director.id %}">{{ director.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+      {% else %}
+    <p>No directors listed.</p>
+      {% endif %}
+    {% endwith %}
+
+    {% with acts=movie.actors.all %}
+      {% if acts|length %}
+    <h3>Actor{{ acts|length|pluralize }}:</h3>
+    <p>{% for actor in acts %}<a href="{% url 'actorDetail' actor.id %}">{{ actor.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+      {% else %}
+    <p>No actors listed.</p>
+      {% endif %}
+    {% endwith %}
+
+    {% with counts=movie.countries.all %}
+      {% if counts|length %}
+    <h3>Countr{{ counts|length|pluralize:"y,ies" }}:</h3>
+    <p>{% for country in counts %}<a href="{% url 'countryDetail' country.id %}">{{ country.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+      {% else %}
+    <p>No countries listed.</p>
+      {% endif %}
+    {% endwith %}
+
+    <p>{{ movie.review }}</p>
+  {% endif %}
+
+  <div class="d-flex justify-content-end">
+    <a class="m-2 btn btn-primary" href="{% url 'admin:movieCrud_movie_change' movie.id %}">Bad entry?</a>
+  </div>
+  </article>
+{% endblock content %}

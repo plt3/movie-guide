@@ -1,0 +1,55 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'movieCrud/bootstrap.min.css' %}">
+
+    <title>{% block title %}Maltin Home{% endblock title %}</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Leonard Maltin's Movie Guide</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="{% url 'admin:index' %}">Admin</a>
+            </li>
+          </ul>
+          <form action="{% url 'home' %}" method="get" class="d-lg-flex">
+            <select class="form-select me-2 mb-2 mb-lg-0" name="type" aria-label="search type">
+              <option value="title" {% if searchType == 'title' %}selected{% endif %}>Titles</option>
+              <option value="actor" {% if searchType == 'actor' %}selected{% endif %}>Actors</option>
+              <option value="director" {% if searchType == 'director' %}selected{% endif %}>Directors</option>
+              <option value="country" {% if searchType == 'country' %}selected{% endif %}>Countries</option>
+              <option value="year" {% if searchType == 'year' %}selected{% endif %}>Years</option>
+              <option value="rating" {% if searchType == 'rating' %}selected{% endif %}>Ratings</option>
+              <option value="review" {% if searchType == 'review' %}selected{% endif %}>Reviews</option>
+            </select>
+            <input class="form-control me-2 mb-2 mb-lg-0" autocomplete="off" name="q" type="search" value="{{ searchQuery }}" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+    </nav>
+    <main class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          {% block content %}
+          {% endblock content %}
+        </div>
+      </div>
+    </main>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="{% static 'movieCrud/bootstrap.bundle.min.js' %}"></script>
+  </body>
+</html>
