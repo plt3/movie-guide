@@ -3,7 +3,19 @@
 {% block title %}Leonard Maltin's Movie Guide{% endblock title %}
 
 {% block content %}
-  {% if searchQuery %}
+  {% if not searchQuery and not searchType %}
+  <h3 class="mb-4 text-center">Leonard Maltin's Movie Guide v3.0</h3>
+  <form action="{% url 'home' %}" method="get" class="">
+    <input class="form-control mb-2" autofocus autocomplete="off" name="qTitle" type="search" placeholder="Search titles" aria-label="Search">
+    <input class="form-control mb-2" autocomplete="off" name="qActor" type="search" placeholder="Search actors" aria-label="Search">
+    <input class="form-control mb-2" autocomplete="off" name="qDirector" type="search" placeholder="Search directors" aria-label="Search">
+    <input class="form-control mb-2" autocomplete="off" name="qCountry" type="search" placeholder="Search countries" aria-label="Search">
+    <input class="form-control mb-2" autocomplete="off" name="qYear" type="search" placeholder="Search years" aria-label="Search">
+    <input class="form-control mb-2" autocomplete="off" name="qRating" type="search" placeholder="Search ratings" aria-label="Search">
+    <input class="form-control mb-2" autocomplete="off" name="qReview" type="search" placeholder="Search reviews" aria-label="Search">
+    <button class="btn btn-outline-success" type="submit">Search</button>
+  </form>
+  {% elif searchQuery %}
     {% if searchType == 'actor' or searchType == 'director' %}
       {% if paginator.count %}
   <h3>Viewing {{ searchType }}{{ paginator.count|pluralize }} {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }} for search "{{ searchQuery }}":</h3>
@@ -15,6 +27,7 @@
   <h3>Viewing countr{{ paginator.count|pluralize:"y,ies" }} {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }} for search "{{ searchQuery }}":</h3>
       {% else %}
   <h3>No countries found for search "{{ searchQuery }}":</h3>
+  <h6 class="mt-3">Did you search by the name of the country instead of the adjective? (i.e. try "French" instead of "France")</h6>
       {% endif %}
     {% elif searchType == 'year' %}
       {% if paginator.count %}
@@ -51,6 +64,7 @@
     {% endif %}
   {% endif %}
 
+  {% if object_list|length %}
   <div class="my-4 list-group">
     {% for object in object_list %}
       {% if searchType == 'actor' %}
@@ -67,23 +81,25 @@
 
   <nav>
     <ul class="pagination justify-content-end">
-  {% if page_obj.has_previous %}
+    {% if page_obj.has_previous %}
       <li class="page-item"><a class="page-link" href="?type={{ searchType }}&q={{ searchQuery }}&page=1">First</a></li>
       <li class="page-item"><a class="page-link" href="?type={{ searchType }}&q={{ searchQuery }}&page={{ page_obj.previous_page_number }}">Previous</a></li>
-  {% else %}
+    {% else %}
       <li class="page-item disabled"><a class="page-link" tabindex="-1" href="?type={{ searchType }}&q={{ searchQuery }}&page=1">First</a></li>
       <li class="page-item disabled"><a class="page-link" tabindex="-1" href="?type={{ searchType }}&q={{ searchQuery }}&page=1">Previous</a></li>
-  {% endif %}
+    {% endif %}
 
       <li class="page-item active"><a class="page-link" href="">{{ page_obj.number }}</a></li>
 
-  {% if page_obj.has_next %}
+    {% if page_obj.has_next %}
       <li class="page-item"><a class="page-link" href="?type={{ searchType }}&q={{ searchQuery }}&page={{ page_obj.next_page_number }}">Next</a></li>
       <li class="page-item"><a class="page-link" href="?type={{ searchType }}&q={{ searchQuery }}&page={{ paginator.num_pages }}">Last</a></li>
-  {% else %}
+    {% else %}
       <li class="page-item disabled"><a class="page-link" tabindex="-1" href="?type={{ searchType }}&q={{ searchQuery }}&page={{ page_obj.num_pages }}">Next</a></li>
       <li class="page-item disabled"><a class="page-link" tabindex="-1" href="?type={{ searchType }}&q={{ searchQuery }}&page={{ paginator.num_pages }}">Last</a></li>
-  {% endif %}
+    {% endif %}
     </ul>
   </nav>
+  {% endif %}
+  <p class="mt-4 text-end">Made with ❤️ by Paul</p>
 {% endblock content %}
