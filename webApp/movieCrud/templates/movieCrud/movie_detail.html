@@ -61,6 +61,9 @@
     <p>{{ movie.review }}</p>
   {% endif %}
 
+  <p class="mb-1"><a href="{{ movie.wikipediaLink }}" target="_blank">Wikipedia</a></p>
+  <p class="mb-1"><a href="{{ movie.metacriticLink }}" target="_blank">Metacritic</a></p>
+  <p class="mb-1"><a href="{{ movie.justWatchLink }}" target="_blank">JustWatch</a></p>
   <div class="d-flex justify-content-end">
     <a class="m-2 btn btn-primary" href="{% url 'admin:movieCrud_movie_change' movie.id %}">Bad entry?</a>
   </div>

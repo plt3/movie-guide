@@ -5,6 +5,10 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+import re
+import unicodedata
+from urllib.parse import quote
+
 from django.db import models
 from django.urls import reverse
 
@@ -109,3 +113,43 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.title
+
+    def clean_title_for_link(self, space_replacement, website):
+        cleaned_title = str(self.title)
+
+        if cleaned_title.endswith(", The"):
+            cleaned_title = "The " + cleaned_title.removesuffix(", The")
+
+        normalized = unicodedata.normalize("NFD", cleaned_title)
+        cleaned_title = "".join(
+            char for char in normalized if unicodedata.category(char) != "Mn"
+        )
+
+        if website == "metacritic":
+            cleaned_title = cleaned_title.replace(" & ", " ")
+
+        if website in ["metacritic", "justwatch"]:
+            cleaned_title = re.sub(r"&|\+", "and", cleaned_title)
+            cleaned_title = re.sub(r"[^A-Za-z ]+", "", cleaned_title)
+
+        cleaned_title = cleaned_title.replace(" ", space_replacement)
+
+        if website in ["metacritic", "justwatch"]:
+            cleaned_title = cleaned_title.lower()
+
+        return quote(cleaned_title)
+
+    def wikipediaLink(self):
+        return "https://en.wikipedia.org/wiki/" + self.clean_title_for_link(
+            "_", "wikipedia"
+        )
+
+    def metacriticLink(self):
+        return "https://www.metacritic.com/movie/" + self.clean_title_for_link(
+            "-", "metacritic"
+        )
+
+    def justWatchLink(self):
+        return "https://www.justwatch.com/us/movie/" + self.clean_title_for_link(
+            "-", "justwatch"
+        )
